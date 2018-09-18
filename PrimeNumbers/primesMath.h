@@ -5,6 +5,8 @@
 
 using namespace std;
 
+//Dinamic programming applied to the expansion of Pascal's Triangle
+vector<vector<unsigned long long int>> pascalTriangleMemory;
 
 /*This function returns true if a and b are congruent module n and return false otherwise*/
 bool congrModN(int a, int b, int n){
@@ -92,30 +94,71 @@ int ord(int a, int n) {
 So, we'll need two integers: n and a, which are respectively the exponent of the power and the coeficient of degree 0 in the polynomial X + a. 
 We also need two empty vectors coef and listcoef to store those coeficients different from zero and which exponent of the polynomial doesn't have coeficient congruent to zero.*/
 
-std::vector<int> pascalTriangle(int n) {
+std::vector<unsigned long long int> pascalTriangle(int n) {
 	int count = 0;
-	std::vector<int> v;
-	v.push_back(1);
-	if (n == 0)
-	{
+	
+	//Using the values allocated at pascalTriangleMemory
+	if (n < pascalTriangleMemory.size()) {
+		return pascalTriangleMemory[n];
+	} else {
+		//define the vector that will be returned 
+		std::vector<unsigned long long int> v;
+
+		//verify if pascalTriangleMemory is empty
+		if (pascalTriangleMemory.size() == 0) {
+			v.push_back(1);
+			if (pascalTriangleMemory.size() == 0){
+				pascalTriangleMemory.push_back(v);
+			}
+			if (n == 0)
+			{
+				return v;
+			}
+			
+			//Here each loop will form the i-th line of pascal triangle
+			for (int i = 1; i <= n; i++)
+			{
+				//here we calculate the values of the i-th line
+				for (int j = i; j > 0; j--)
+				{
+					if (j == i)
+					{
+						v.push_back(1);
+						continue;
+					}
+					else {
+						v[j] = v[j] + v[j-1];
+					}
+				}
+				//the line below was used for debug
+				//cout << ++count << '\n';
+
+				//hereeach line is added to pascalTriangleMemory so it can be used easily when it's necessary
+				pascalTriangleMemory.push_back(v);
+			}
+			cout << "\n\n";
+		} else { //Here it'll continue the pascal's triangle calculation after the last element of pascalTriangleMemory
+			v = pascalTriangleMemory.back();
+			for (int i = pascalTriangleMemory.size(); i <= n; i++)
+			{
+				for (int j = i; j > 0; j--)
+				{
+					if (j == i)
+					{
+						v.push_back(1);
+						continue;
+					}
+					else {
+						v[j] = v[j] + v[j-1];
+					}
+				}
+				cout << i << '\n';
+				pascalTriangleMemory.push_back(v);
+			}
+			cout << "\n\n";
+		}
+
 		return v;
 	}
-	
-	for (int i = 1; i <= n; i++)
-	{
-		for (int j = i; j > 0; j--)
-		{
-			if (j == i)
-			{
-				v.push_back(1);
-				continue;
-			}
-			else {
-				v[j] = v[j] + v[j-1];
-			}
-		}
-	}
-
-	return v;
 }
 
